@@ -1,8 +1,6 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
 
-  # GET /posts
-  # GET /posts.json
   def index
     @inbox_messages = []
     @sent_messages = []
@@ -12,33 +10,28 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /posts/1
-  # GET /posts/1.json
+
   def show
-    # binding.pry
+    if current_user.id != Post.find(params[:id].to_i).send_to
+      redirect_to posts_path
+    end
   end
 
-  # GET /posts/new
   def new
     @user_select = user_select
-
     @post = Post.new
 
   end
 
-  # GET /posts/1/edit
+
   def edit
   end
 
-
-  # POST /posts
-  # POST /posts.json
   def create
 
     # this feesl hackey. refactor......LATER.
     temp_params = post_params
     temp_params[:created_by] = session[:user_id]
-    # binding.pry
     @post = Post.new(temp_params)
     respond_to do |format|
       if @post.save
@@ -51,8 +44,6 @@ class PostsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /posts/1
-  # PATCH/PUT /posts/1.json
   def update
     respond_to do |format|
       if @post.update(post_params)
@@ -65,8 +56,6 @@ class PostsController < ApplicationController
     end
   end
 
-  # DELETE /posts/1
-  # DELETE /posts/1.json
   def destroy
     @post.destroy
     respond_to do |format|
